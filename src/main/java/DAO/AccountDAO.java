@@ -48,7 +48,7 @@ public class AccountDAO implements DAO<Account> {
     @Override
     public List<Account> getAll() {
         Connection conn = ConnectionUtil.getConnection();
-        List<Account> accs = new ArrayList<Account>();
+        List<Account> accs = new ArrayList<>();
         try{
             String sql = "select * from account";
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -70,6 +70,7 @@ public class AccountDAO implements DAO<Account> {
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1, t.getUsername());
             psmt.setString(2, t.getPassword());
+            psmt.executeUpdate();
 
         } catch (SQLException e){
             e.printStackTrace();
@@ -78,9 +79,15 @@ public class AccountDAO implements DAO<Account> {
 
     @Override
     public void update(Account t, String[] params) {
+        // params = {sample_user, sample_pass}
         Connection conn = ConnectionUtil.getConnection();
         try{
-
+            String sql = "update account set username=?, password=?, WHERE account_id=?";
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setString(1, params[0]);
+            psmt.setString(2, params[1]);
+            psmt.setInt(3, t.getAccount_id());
+            psmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -90,7 +97,10 @@ public class AccountDAO implements DAO<Account> {
     public void delete(Account t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-
+            String sql = "delete from account where account_id=?";
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setInt(1, t.getAccount_id());
+            psmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
