@@ -14,6 +14,10 @@ public class AccountService {
         else return accDAO.save(acc);
     }
 
+    public boolean accountExists(int id){
+        return !(accDAO.getByID(id) == null);
+    }
+
     public Account login(Account acc){
         Account test = accDAO.getByUsername(acc.getUsername());
         if(test == null) return null;
