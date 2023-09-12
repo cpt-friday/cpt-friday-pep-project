@@ -1,5 +1,12 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Account;
+import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -9,6 +16,13 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    AccountService accServ;
+    MessageService msgServ;
+    public SocialMediaController(){
+        accServ = new AccountService();
+        msgServ = new MessageService(); 
+    }
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -17,7 +31,9 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
-
+        app.post("register", this::registerHandler);
+        app.post("login", this::loginHandler);
+        app.post("messages", this::postMessageHandler);
         return app;
     }
 
@@ -29,5 +45,23 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
+    private void registerHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Account acc = mapper.readValue(ctx.body(), Account.class);
+        Account added = accServ.addAccount(acc);
+        if(added == null) ctx.status(400);
+        else ctx.json(mapper.writeValueAsString(added));
+    }
 
+    private void loginHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Account acc = mapper.readValue(ctx.body(), Account.class);
+        Account logged = accServ.login(acc);
+        if(logged == null) ctx.status(401);
+        else ctx.json(mapper.writeValueAsString(logged));
+    }
+
+    private void postMessageHandler(Context ctx) throws JsonProcessingException{
+        
+    }
 }

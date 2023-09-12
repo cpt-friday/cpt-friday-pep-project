@@ -63,30 +63,35 @@ public class AccountDAO implements DAO<Account> {
     }
 
     @Override
-    public void save(Account t) {
+    public Account save(Account t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "insert into account (username, password) values (?, ?)";
-            PreparedStatement psmt = conn.prepareStatement(sql);
+            PreparedStatement psmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             psmt.setString(1, t.getUsername());
             psmt.setString(2, t.getPassword());
             psmt.executeUpdate();
+            ResultSet pkeys = psmt.getGeneratedKeys();
+            if(pkeys.next()){
+                int accID = pkeys.getInt(1);
+                return new Account(accID, t.getUsername(), t.getPassword());
+            }
 
         } catch (SQLException e){
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    public void update(Account t, String[] params) {
-        // params = {sample_user, sample_pass}
+    public void update(int id, Account t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "update account set username=?, password=?, WHERE account_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
-            psmt.setString(1, params[0]);
-            psmt.setString(2, params[1]);
-            psmt.setInt(3, t.getAccount_id());
+            psmt.setString(1, t.getUsername());
+            psmt.setString(2, t.getPassword());
+            psmt.setInt(3, id);
             psmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();

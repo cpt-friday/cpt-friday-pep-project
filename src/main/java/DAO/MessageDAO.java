@@ -44,31 +44,38 @@ public class MessageDAO implements DAO<Message> {
     }
 
     @Override
-    public void save(Message t) {
+    public Message save(Message t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "insert into message (posted_by, message_text, time_posted_epoch) values (?, ?, ?)";
-            PreparedStatement psmt = conn.prepareStatement(sql);
+            PreparedStatement psmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             psmt.setInt(1, t.getPosted_by());
             psmt.setString(2, t.getMessage_text());
             psmt.setLong(3, t.getTime_posted_epoch());
             psmt.executeUpdate();
-        } catch(SQLException e){
+            ResultSet pkeys = psmt.getGeneratedKeys();
+            if(pkeys.next()){
+                int msgID = pkeys.getInt(1);
+                return new Message(msgID, t.getPosted_by(), t.getMessage_text(), t.getTime_posted_epoch());
+            }
+
+        } catch (SQLException e){
             e.printStackTrace();
         }
+        return null;
     }
 
+
     @Override
-    public void update(Message t, String[] params) {
-        // params = {sample_poster, sample_text, sample_epoch}
+    public void update(int id, Message t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "update message set posted_by=?, message_text=?, time_posted_epoch=? when message_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
-            psmt.setInt(1, Integer.parseInt(params[0]));
-            psmt.setString(2, params[1]);
-            psmt.setLong(3, Long.parseLong(params[2]));
-            psmt.setInt(4, t.getMessage_id());
+            psmt.setInt(1, t.getPosted_by());
+            psmt.setString(2, t.getMessage_text());
+            psmt.setLong(3, t.getTime_posted_epoch());
+            psmt.setInt(4, id);
         } catch(SQLException e){
             e.printStackTrace();
         }
