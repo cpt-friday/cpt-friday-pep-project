@@ -81,15 +81,18 @@ public class SocialMediaController {
     }
 
     private void getMessageByIDHandler(Context ctx){
-        //NOT FOUND TEST FAILED
         int messageID = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.json(msgServ.getMessageByID(messageID));
+        Message found = msgServ.getMessageByID(messageID);
+        if(found == null) ctx.status(200);
+        else ctx.json(found);
     }
 
     private void deleteMessageByIDHandler(Context ctx){
-        //FOUND AND NOT FOUND TESTS FAILED
         int messageID = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.json(msgServ.deleteMessage(messageID));
+        Message archived = msgServ.deleteMessage(messageID);
+        if(archived == null) ctx.status(200);
+        else ctx.json(archived);
+
     }
 
     private void updateMessageByIDHandler(Context ctx) throws JsonProcessingException{

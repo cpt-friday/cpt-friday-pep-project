@@ -21,7 +21,7 @@ public class AccountDAO implements DAO<Account> {
                 return acc;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
 
@@ -39,7 +39,7 @@ public class AccountDAO implements DAO<Account> {
                 return acc;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
 
@@ -57,7 +57,7 @@ public class AccountDAO implements DAO<Account> {
                 accs.add(new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password")));
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return accs;
     }
@@ -78,7 +78,7 @@ public class AccountDAO implements DAO<Account> {
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
@@ -94,25 +94,21 @@ public class AccountDAO implements DAO<Account> {
             psmt.setInt(3, id);
             psmt.executeUpdate();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public Account delete(int id) {
+    public void delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "delete from account where account_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
-            ResultSet rs = psmt.executeQuery();
-            while(rs.next()){
-                return new Account(rs.getString("username"), rs.getString("password"));
-            }
+            psmt.executeUpdate();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        return null;
     }
     
 }

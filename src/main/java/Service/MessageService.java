@@ -25,12 +25,15 @@ public class MessageService {
     }
 
     public Message deleteMessage(int id){
-        return msgDAO.delete(id);
+        Message out = getMessageByID(id);
+        msgDAO.delete(id);
+        return out;
     }
 
     public Message updateMessage(int id, Message msg){
         Message base = getMessageByID(id);
-        if(base == null || msg.getMessage_text().isBlank() || msg.getMessage_text().length() > 255) return null;
+        if(base == null || msg.getMessage_text().isBlank() || msg.getMessage_text().length() >= 255) return null;
+        base.setMessage_text(msg.getMessage_text());
         msgDAO.update(id, base);
         return getMessageByID(id);
     }

@@ -1,11 +1,11 @@
 package DAO;
 
-import java.util.*;
+import java.util.List;
 
 public interface DAO<T> {
     List<T> getAll();
     T getByID(int id);
     T save(T t);
     void update(int id, T t);
-    T delete(int id);
+    void delete(int id);
 }

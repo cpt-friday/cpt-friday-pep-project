@@ -20,7 +20,7 @@ public class MessageDAO implements DAO<Message> {
                 return new Message(id, rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
             }
         } catch(SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
@@ -37,7 +37,7 @@ public class MessageDAO implements DAO<Message> {
                 msgs.add(new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch")));
             }
         } catch(SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return msgs;
     }
@@ -54,7 +54,7 @@ public class MessageDAO implements DAO<Message> {
                 msgs.add(new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch")));
             }
         } catch(SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return msgs;
     }
@@ -76,7 +76,7 @@ public class MessageDAO implements DAO<Message> {
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
@@ -86,32 +86,29 @@ public class MessageDAO implements DAO<Message> {
     public void update(int id, Message t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "update message set posted_by=?, message_text=?, time_posted_epoch=? when message_id=?";
+            String sql = "update message set posted_by=?, message_text=?, time_posted_epoch=? where message_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, t.getPosted_by());
             psmt.setString(2, t.getMessage_text());
             psmt.setLong(3, t.getTime_posted_epoch());
             psmt.setInt(4, id);
+            psmt.executeUpdate();
         } catch(SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public Message delete(int id) {
+    public void delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "delete from message where message_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
-            ResultSet rs = psmt.executeQuery();
-            while(rs.next()){
-                return new Message(rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
-            }
+            psmt.executeUpdate();
         } catch(SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        return null;
     }
     
 }
