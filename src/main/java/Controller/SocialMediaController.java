@@ -36,6 +36,10 @@ public class SocialMediaController {
         app.post("login", this::loginHandler);
         app.post("messages", this::postMessageHandler);
         app.get("messages", this::getAllMessagesHandler);
+        app.get("messages/{message_id}", this::getMessageByIDHandler);
+        app.delete("messages/{message_id}", this::deleteMessageByIDHandler);
+        app.patch("messages/{message_id}", this::updateMessageByIDHandler);
+        app.get("accounts/{account_id}/messages", this::getMessagesFromAccountHandler);
         return app;
     }
 
@@ -72,8 +76,34 @@ public class SocialMediaController {
         else ctx.json(mapper.writeValueAsString(posted));
     }
 
-    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException{
-        
+    private void getAllMessagesHandler(Context ctx){
+        ctx.json(msgServ.getAllMessages());
     }
 
+    private void getMessageByIDHandler(Context ctx){
+        //NOT FOUND TEST FAILED
+        int messageID = Integer.parseInt(ctx.pathParam("message_id"));
+        ctx.json(msgServ.getMessageByID(messageID));
+    }
+
+    private void deleteMessageByIDHandler(Context ctx){
+        //FOUND AND NOT FOUND TESTS FAILED
+        int messageID = Integer.parseInt(ctx.pathParam("message_id"));
+        ctx.json(msgServ.deleteMessage(messageID));
+    }
+
+    private void updateMessageByIDHandler(Context ctx) throws JsonProcessingException{
+        //SUCCESS AND TOO LONG TESTS FAILED
+        int messageID = Integer.parseInt(ctx.pathParam("message_id"));
+        ObjectMapper mapper = new ObjectMapper();
+        Message update = mapper.readValue(ctx.body(), Message.class);
+        Message finished = msgServ.updateMessage(messageID, update);
+        if(finished == null) ctx.status(400);
+        else ctx.json(finished);
+    }
+
+    private void getMessagesFromAccountHandler(Context ctx){
+        int accountID = Integer.parseInt(ctx.pathParam("account_id"));
+        ctx.json(msgServ.getMessagesFromAccount(accountID));
+    }
 }

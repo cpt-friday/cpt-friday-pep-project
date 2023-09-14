@@ -17,13 +17,29 @@ public class MessageDAO implements DAO<Message> {
             psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
             while(rs.next()){
-                Message mss = new Message(id, rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
-                return mss;
+                return new Message(id, rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
             }
         } catch(SQLException e){
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Message> getByAccID(int accID){
+        Connection conn = ConnectionUtil.getConnection();
+        List<Message> msgs = new ArrayList<>();
+        try{
+            String sql = "select * from message where posted_by=?";
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setInt(1, accID);
+            ResultSet rs = psmt.executeQuery();
+            while(rs.next()){
+                msgs.add(new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch")));
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return msgs;
     }
 
     @Override
@@ -82,16 +98,20 @@ public class MessageDAO implements DAO<Message> {
     }
 
     @Override
-    public void delete(Message t) {
+    public Message delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "delete from message where message_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
-            psmt.setInt(1, t.getMessage_id());
-            psmt.executeUpdate();
+            psmt.setInt(1, id);
+            ResultSet rs = psmt.executeQuery();
+            while(rs.next()){
+                return new Message(rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+            }
         } catch(SQLException e){
             e.printStackTrace();
         }
+        return null;
     }
     
 }

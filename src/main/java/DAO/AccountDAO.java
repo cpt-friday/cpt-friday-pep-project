@@ -99,16 +99,20 @@ public class AccountDAO implements DAO<Account> {
     }
 
     @Override
-    public void delete(Account t) {
+    public Account delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
             String sql = "delete from account where account_id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
-            psmt.setInt(1, t.getAccount_id());
-            psmt.executeUpdate();
+            psmt.setInt(1, id);
+            ResultSet rs = psmt.executeQuery();
+            while(rs.next()){
+                return new Account(rs.getString("username"), rs.getString("password"));
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
+        return null;
     }
     
 }
