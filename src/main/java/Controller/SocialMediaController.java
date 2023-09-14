@@ -93,7 +93,6 @@ public class SocialMediaController {
     }
 
     private void updateMessageByIDHandler(Context ctx) throws JsonProcessingException{
-        //SUCCESS AND TOO LONG TESTS FAILED
         int messageID = Integer.parseInt(ctx.pathParam("message_id"));
         ObjectMapper mapper = new ObjectMapper();
         Message update = mapper.readValue(ctx.body(), Message.class);
