@@ -2,7 +2,6 @@ package DAO;
 
 import java.util.*;
 import java.sql.*;
-
 import Model.Message;
 import Util.ConnectionUtil;
 
@@ -12,7 +11,7 @@ public class MessageDAO implements DAO<Message> {
     public Message getByID(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "select * from message where message_id=?";
+            String sql = "select * from message where message_id = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
             ResultSet rs = psmt.executeQuery();
@@ -29,7 +28,7 @@ public class MessageDAO implements DAO<Message> {
         Connection conn = ConnectionUtil.getConnection();
         List<Message> msgs = new ArrayList<>();
         try{
-            String sql = "select * from message where posted_by=?";
+            String sql = "select * from message where posted_by = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, accID);
             ResultSet rs = psmt.executeQuery();
@@ -86,7 +85,7 @@ public class MessageDAO implements DAO<Message> {
     public void update(int id, Message t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "update message set posted_by=?, message_text=?, time_posted_epoch=? where message_id=?";
+            String sql = "update message set posted_by = ?, message_text = ?, time_posted_epoch = ? where message_id = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, t.getPosted_by());
             psmt.setString(2, t.getMessage_text());
@@ -102,7 +101,7 @@ public class MessageDAO implements DAO<Message> {
     public void delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "delete from message where message_id=?";
+            String sql = "delete from message where message_id = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
             psmt.executeUpdate();

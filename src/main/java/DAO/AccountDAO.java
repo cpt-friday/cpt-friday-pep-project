@@ -2,7 +2,6 @@ package DAO;
 
 import java.sql.*;
 import java.util.*;
-
 import Model.Account;
 import Util.ConnectionUtil;
 
@@ -87,7 +86,7 @@ public class AccountDAO implements DAO<Account> {
     public void update(int id, Account t) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "update account set username=?, password=?, WHERE account_id=?";
+            String sql = "update account set username = ?, password = ?, where account_id = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1, t.getUsername());
             psmt.setString(2, t.getPassword());
@@ -102,7 +101,7 @@ public class AccountDAO implements DAO<Account> {
     public void delete(int id) {
         Connection conn = ConnectionUtil.getConnection();
         try{
-            String sql = "delete from account where account_id=?";
+            String sql = "delete from account where account_id = ?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
             psmt.executeUpdate();
